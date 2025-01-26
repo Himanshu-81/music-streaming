@@ -7,6 +7,21 @@ const songSchema = new Schema(
       required: true,
     },
 
+    genre: {
+      type: String,
+      enum: [
+        "Pop",
+        "Rock",
+        "Jazz",
+        "Classical",
+        "Hip-hop",
+        "Electronic",
+        "Bollywood",
+        "Other",
+      ],
+      default: "Other",
+    },
+
     artist: {
       type: String,
       required: true,

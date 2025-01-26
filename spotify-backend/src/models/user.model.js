@@ -35,20 +35,18 @@ const userSchema = new Schema(
       type: String,
     },
 
-    likedSongs: {
-      type: Number,
-      default: 0,
-    },
-
-    likedSongPlayList: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Song",
-      },
-    ],
+    playlists: [{ type: mongoose.Schema.Types.ObjectId, ref: "Playlist" }],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true }, // Include virtuals in JSON responses
+    toObject: { virtuals: true },
+  }
 );
+
+userSchema.virtual("playlistCount").get(function () {
+  return this.playlists.length;
+});
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -88,3 +86,22 @@ userSchema.methods.generateRefreshToken = function () {
 };
 
 export const User = mongoose.model("User", userSchema);
+
+// code to use for the defaul playlist of the user
+
+// const defaultPlaylist = new Playlist({
+//   name: "Liked Songs",
+//   createdBy: savedUser._id, // Associate with the user's ID
+//   isPublic: false,
+//   songs: [],
+// });
+// await defaultPlaylist.save();
+
+// code to access the liked song
+
+// const user = await User.findById(userId).populate("likedSongPlayList");
+// console.log(user.likedSongs); // Outputs the number of liked songs
+
+// const user = await User.findById(userId);
+// console.log(user.likedSongPlayList); // [ObjectId1, ObjectId2, ObjectId3]
+// console.log(user.likedSongs); // 3
