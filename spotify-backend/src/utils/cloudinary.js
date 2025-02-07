@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
-import ApiError from "./apiError.js"; // Ensure this is properly handled in your project
+import { ApiError } from "./apiError.js"; // Ensure this is properly handled in your project
 
 // Configure Cloudinary
 cloudinary.config({
@@ -19,7 +19,7 @@ const removeLocalFile = (filePath) => {
 // Upload Image Function
 const uploadImage = async (imagePath) => {
   try {
-    if (!imagePath) throw new ApiError("No image file provided", 400);
+    if (!imagePath) throw new ApiError(400, "No image file provided");
 
     // Upload the image to Cloudinary
     const response = await cloudinary.uploader.upload(imagePath, {
@@ -32,14 +32,14 @@ const uploadImage = async (imagePath) => {
     return response.secure_url; // Return only the URL to store in DB
   } catch (error) {
     removeLocalFile(imagePath);
-    throw new ApiError("Image upload failed", 500);
+    throw new ApiError(500, "Image upload failed");
   }
 };
 
 // Upload Song Function
 const uploadSong = async (songPath) => {
   try {
-    if (!songPath) throw new ApiError("No song file provided", 400);
+    if (!songPath) throw new ApiError(400, "No song file provided");
 
     // Upload the song to Cloudinary
     const response = await cloudinary.uploader.upload(songPath, {
@@ -52,7 +52,7 @@ const uploadSong = async (songPath) => {
     return response.secure_url; // Return only the URL to store in DB
   } catch (error) {
     removeLocalFile(songPath);
-    throw new ApiError("Song upload failed", 500);
+    throw new ApiError(500, "Song upload failed");
   }
 };
 

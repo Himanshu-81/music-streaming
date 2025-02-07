@@ -1,15 +1,14 @@
 class ApiError extends Error {
   constructor(
-    statuscode,
+    statusCode, // Fixed typo (was statuscode)
     message = "Something went wrong",
     errors = [],
     stack = "",
     data = null
   ) {
     super(message);
-    this.statuscode = statuscode;
+    this.statusCode = statusCode; // Ensure it's statusCode
     this.data = data;
-    this.message = message;
     this.success = false;
     this.errors = errors;
 

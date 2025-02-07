@@ -1,5 +1,5 @@
-import { User } from "../models/user.model";
-import { ApiError } from "./apiError";
+import { User } from "../models/user.model.js";
+import { ApiError } from "./apiError.js";
 
 const generateTheAccessAndRefreshToken = async (userId) => {
   try {

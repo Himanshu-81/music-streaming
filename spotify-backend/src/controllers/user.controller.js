@@ -9,22 +9,20 @@ import {
   registerUserSchema,
 } from "../validations/user.validations.js";
 
-const registerUser = asyncHandler(async (req, res) => {
-  const { name, username, email, password, confirmPassword, profilePicture } =
-    req.body;
+const registerUser = asyncHandler(async (req, res, next) => {
+  const { name, username, email, password, confirmPassword } = req.body;
 
   if (password !== confirmPassword) {
     throw new ApiError("Passwords do not match", 400);
   }
 
   // Validate the user input
-  const validateUser = registerUserSchema.parse({
+  registerUserSchema.parse({
     name,
     username,
     email,
     password,
     confirmPassword,
-    profilePicture,
   });
 
   const existedUser = await User.findOne({
@@ -32,19 +30,19 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (existedUser) {
-    throw new ApiError("Username or email already exists", 400);
+    throw new ApiError(400, "Username or email already exists");
   }
 
-  const profilePictureLocalPath = req.files?.profilePicture[0]?.path;
+  const profilePictureLocalPath = req.file?.path;
 
   if (!profilePictureLocalPath) {
-    throw new ApiError("Profile picture is required", 400);
+    throw new ApiError(400, "Profile picture is required");
   }
 
   const profilePictureUrl = await uploadImage(profilePictureLocalPath);
 
-  if (!profilePictureUrl.url) {
-    throw new ApiError("Failed uploading the profile picture", 401);
+  if (!profilePictureUrl) {
+    throw new ApiError(401, "Failed uploading the profile picture");
   }
 
   const newUser = await User.create({
@@ -52,7 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     email,
     password,
-    profilePicture: profilePictureUrl.url,
+    profilePicture: profilePictureUrl,
     isVerified: false,
   });
 
@@ -63,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
   //   );
 
   if (!createdUser) {
-    throw new ApiError("Failed to create user", 500);
+    throw new ApiError(500, "Failed to create user");
   }
 
   return res
@@ -87,12 +85,12 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError("Invalid login credentials", 404);
+    throw new ApiError(404, "Invalid login credentials");
   }
 
   // Check if password exists and is correct
   if (!user.password || !(await user.isPasswordCorrect(password))) {
-    throw new ApiError("Invalid login credentials", 401);
+    throw new ApiError(401, "Invalid login credentials");
   }
 
   // Generate JWT tokens
