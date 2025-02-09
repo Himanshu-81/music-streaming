@@ -8,6 +8,8 @@ import {
   loginUserSchema,
   registerUserSchema,
 } from "../validations/user.validations.js";
+import { sendEmail } from "../helper/sendEmail.js";
+import { generateVerificationLinkToken } from "../utils/generateVerificationLinkToken.js";
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const { name, username, email, password, confirmPassword } = req.body;
@@ -45,6 +47,10 @@ const registerUser = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, "Failed uploading the profile picture");
   }
 
+  // Generate the verfication token for the user email verify
+  const { verificationToken, verificationTokenExpiry } =
+    generateVerificationLinkToken();
+
   const newUser = await User.create({
     name,
     username,
@@ -52,17 +58,22 @@ const registerUser = asyncHandler(async (req, res, next) => {
     password,
     profilePicture: profilePictureUrl,
     isVerified: false,
+    verificationToken,
+    verificationTokenExpiry,
   });
 
   const createdUser = { ...newUser, password: "", refreshToken: "" };
 
-  //   const createdUser = await User.findById(user._id).select(
-  //     "-password -refreshToken"
-  //   );
-
   if (!createdUser) {
     throw new ApiError(500, "Failed to create user");
   }
+
+  sendEmail(
+    email,
+    "Welcome To Spotify",
+    name,
+    (verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}&email=${email}`)
+  );
 
   return res
     .status(200)
@@ -154,4 +165,28 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out"));
 });
 
-export { loginUser, registerUser, logoutUser };
+const verifyEmail = asyncHandler(async (req, res) => {
+  const { email, token } = req.query;
+
+  if (!email || !token) {
+    throw new ApiError(403, "Invalid verification link");
+  }
+
+  const user = await User.findOne({
+    email,
+    verificationToken: token,
+    verificationTokenExpiry: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new ApiError(403, "Invalid verification link");
+  }
+
+  user.isVerified = true;
+  user.verificationToken = undefined;
+  user.verificationTokenExpiry = undefined;
+
+  await user.save({ validateBeforeSave: false });
+});
+
+export { loginUser, registerUser, logoutUser, verifyEmail };

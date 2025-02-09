@@ -26,9 +26,17 @@ const userSchema = new Schema(
 
     profilePicture: { type: String, default: null },
 
-    isVerfied: {
+    isVerified: {
       type: Boolean,
       default: false,
+    },
+
+    verificationToken: {
+      type: String,
+    },
+
+    verificationTokenExpiry: {
+      type: Date,
     },
 
     refreshToken: {

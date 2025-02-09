@@ -4,7 +4,7 @@ import { ApiError } from "./apiError.js";
 const generateTheAccessAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
-    const acessToken = user.generateAccessToken();
+    const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
