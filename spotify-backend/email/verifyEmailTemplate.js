@@ -1,6 +1,4 @@
 export const registrationEmailTemplate = (name, verificationUrl) => {
-  console.log("template: ", verificationUrl);
-
   return `
     <!DOCTYPE html>
     <html>
@@ -55,7 +53,7 @@ export const registrationEmailTemplate = (name, verificationUrl) => {
     </head>
     <body>
         <div class="container">
-            <h2>Welcome to MyApp, ${name}!</h2>
+            <h2>Welcome to Spotify, ${name}!</h2>
             <p>We're excited to have you on board. Please verify your email to start using your account.</p>
             <a href="${verificationUrl}" class="btn">Verify Email</a>
             <p class="footer">If you didn’t create an account, you can safely ignore this email.</p>

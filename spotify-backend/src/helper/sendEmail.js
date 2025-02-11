@@ -13,8 +13,6 @@ var transport = nodemailer.createTransport({
 });
 
 export const sendEmail = async (to, subject, name, verificationUrl) => {
-  console.log("send email", verificationUrl);
-
   try {
     const mailOptions = {
       from: process.env.APP_MAIL,

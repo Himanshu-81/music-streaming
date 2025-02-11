@@ -15,7 +15,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
   const { name, username, email, password, confirmPassword } = req.body;
 
   if (password !== confirmPassword) {
-    throw new ApiError("Passwords do not match", 400);
+    throw new ApiError(400, "Passwords do not match");
   }
 
   // Validate the user input
@@ -72,7 +72,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     email,
     "Welcome To Spotify",
     name,
-    (verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}&email=${email}`)
+    `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}&email=${email}`
   );
 
   return res
@@ -187,6 +187,10 @@ const verifyEmail = asyncHandler(async (req, res) => {
   user.verificationTokenExpiry = undefined;
 
   await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Email verified successfully"));
 });
 
 export { loginUser, registerUser, logoutUser, verifyEmail };
