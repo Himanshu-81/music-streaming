@@ -193,4 +193,55 @@ const verifyEmail = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Email verified successfully"));
 });
 
-export { loginUser, registerUser, logoutUser, verifyEmail };
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user?._id).select(
+    "-password -refreshToken"
+  );
+
+  if (!user) {
+    throw new ApiError(404, "You are not logged in");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User profile fetched successfully"));
+});
+
+const changeUserPassword = asyncHandler(async (req, res) => {
+  const { newPassword, oldPassword } = req.body;
+
+  if (!newPassword || !oldPassword) {
+    throw new ApiError(400, "Old password and new password are required");
+  }
+
+  if (newPassword === oldPassword) {
+    throw new ApiError(
+      400,
+      "New password must be different from the old password"
+    );
+  }
+
+  const user = await User.findById(req.user._id);
+
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Old password is incorrect");
+  }
+
+  user.password = newPassword;
+
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
+export {
+  loginUser,
+  registerUser,
+  logoutUser,
+  verifyEmail,
+  getUserProfile,
+  changeUserPassword,
+};

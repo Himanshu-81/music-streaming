@@ -28,12 +28,13 @@ const songSchema = new Schema(
     },
 
     songCoverImage: {
-      type: String,
+      url: { type: String, required: true },
+      publicId: { type: String, required: true },
     },
 
     songUrl: {
-      type: String,
-      required: true,
+      url: { type: String, required: true },
+      publicId: { type: String, required: true },
     },
   },
   { timestamps: true }
