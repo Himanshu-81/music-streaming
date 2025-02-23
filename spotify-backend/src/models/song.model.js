@@ -23,7 +23,8 @@ const songSchema = new Schema(
     },
 
     artist: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Artist",
       required: true,
     },
 

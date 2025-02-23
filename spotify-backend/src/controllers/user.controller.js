@@ -41,7 +41,10 @@ const registerUser = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "Profile picture is required");
   }
 
-  const profilePictureUrl = await uploadImage(profilePictureLocalPath);
+  const profilePictureUrl = await uploadImage(
+    profilePictureLocalPath,
+    "User avatar"
+  );
 
   if (!profilePictureUrl) {
     throw new ApiError(401, "Failed uploading the profile picture");

@@ -17,14 +17,14 @@ const removeLocalFile = (filePath) => {
 };
 
 // Upload Image Function
-const uploadImage = async (imagePath) => {
+const uploadImage = async (imagePath, folder) => {
   try {
     if (!imagePath) throw new ApiError(400, "No image file provided");
 
     // Upload the image to Cloudinary
     const response = await cloudinary.uploader.upload(imagePath, {
       resource_type: "image",
-      folder: "avatars",
+      folder: folder,
     });
 
     // Remove the local file after successful upload
