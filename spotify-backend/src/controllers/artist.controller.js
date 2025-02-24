@@ -1,8 +1,8 @@
 import { Artist } from "../models/artist.model.js";
-import { Song } from "../models/song.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadImage } from "../utils/cloudinary.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 
 const registerNewArtist = asyncHandler(async (req, res, next) => {
   const { name, bio, isVerified } = req.body;

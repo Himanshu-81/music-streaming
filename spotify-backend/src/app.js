@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes.js";
 import artistRoutes from "./routes/artist.routes.js";
+import songRoutes from "./routes/song.routes.js";
 import { errorHandler } from "./utils/errorHandler.js";
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/artist", artistRoutes);
+app.use("/api/v1/song", songRoutes);
 
 app.use(errorHandler);
 

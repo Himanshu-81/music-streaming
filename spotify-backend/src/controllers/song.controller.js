@@ -1,8 +1,9 @@
 import { Song } from "../models/song.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
-import { uploadImage, uploadSong } from "../utils/cloudinary";
+import { uploadImage, uploadSong } from "../utils/cloudinary.js";
 import { Artist } from "../models/artist.model.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 
 const addNewSong = asyncHandler(async (req, res, next) => {
   const { songName, genre, artist } = req.body;
